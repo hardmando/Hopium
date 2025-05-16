@@ -1,0 +1,57 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace Behaviour.Player
+{ 
+    public class FirstPersonController : MonoBehaviour
+    {
+        private Camera _camera;
+        private CharacterController _characterController;
+        
+        private InputAction _iaMove;
+        private InputAction _iaLook;
+        
+        private Vector2 _movementVector; 
+        private Vector2 _lookVector;
+        [SerializeField] private float movementSpeed;
+        [SerializeField] private float cameraSensitivity;
+        private float _xRotation = 0f;
+        
+        private void Start()
+        {
+            _camera = Camera.main;
+            _characterController = GetComponent<CharacterController>();
+            _iaMove = InputSystem.actions.FindAction("Move");
+            _iaLook = InputSystem.actions.FindAction("Look");   
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        private void Update()
+        {
+            MoveCharacter();
+            MoveCamera();
+        }
+
+        private void MoveCamera()
+        {
+            _lookVector = _iaLook.ReadValue<Vector2>();
+            float lookY = _lookVector.y * cameraSensitivity * Time.deltaTime;
+            float lookX = _lookVector.x * cameraSensitivity * Time.deltaTime;
+            
+            _xRotation -= lookY;
+            _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
+            
+            _camera.transform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+            transform.Rotate(Vector3.up, lookX);
+        }
+
+        private void MoveCharacter()
+        {
+            _movementVector = _iaMove.ReadValue<Vector2>();
+            // _characterController.Move(new Vector3( _movementVector.x * (Time.deltaTime * movementSpeed), 0, _movementVector.y * (Time.deltaTime * movementSpeed) ));
+            
+            
+            Vector3 move = transform.right * _movementVector.x + transform.forward * _movementVector.y;
+            _characterController.Move(move * (movementSpeed * Time.deltaTime));
+        }
+    }
+}
