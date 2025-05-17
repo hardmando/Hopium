@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Behaviour.Player;
 
 namespace Behaviour.Player
 { 
@@ -9,6 +10,7 @@ namespace Behaviour.Player
         private Camera _camera;
         private CharacterController _characterController;
         private RaycastAim _raycastAim;
+        private GameObject _interactableObject;
         
         private InputAction _iaMove;
         private InputAction _iaLook;
@@ -26,7 +28,7 @@ namespace Behaviour.Player
             _characterController = GetComponent<CharacterController>();
             _iaMove = InputSystem.actions.FindAction("Move");
             _iaLook = InputSystem.actions.FindAction("Look");   
-            _iaInteract = InputSystem.actions.FindAction("Interact");
+            _iaInteract = InputSystem.actions.FindAction("Attack");
             Cursor.lockState = CursorLockMode.Locked;
             _raycastAim = GetComponent<RaycastAim>();
         }
@@ -34,6 +36,10 @@ namespace Behaviour.Player
         {
             MoveCharacter();
             MoveCamera();
+            if (_iaInteract.IsPressed())
+            {
+                PickUp();
+            }
         }
 
         private void MoveCamera()
@@ -59,7 +65,12 @@ namespace Behaviour.Player
 
         private void PickUp()
         {
-            
+            _interactableObject = _raycastAim.GetInteractableObject();
+            if (_interactableObject != null)
+            {
+                _interactableObject.GetComponent<IPickable>().PickUp(); 
+                Debug.Log("Interact");
+            }
         }
     }
 }

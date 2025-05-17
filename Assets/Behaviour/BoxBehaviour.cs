@@ -18,7 +18,8 @@ namespace Behaviour
 
         public void PickUp()
         {
-            
+            gameObject.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.yellow * .5f);
+            gameObject.GetComponent<Renderer>().material.EnableKeyword("_EMISSION");
         }
     }
 }

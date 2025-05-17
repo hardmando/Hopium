@@ -7,6 +7,7 @@ namespace Behaviour.Player
         private Camera _camera; 
         [SerializeField] private float maxDistance;
         private GameObject _focusedObject;
+        private GameObject _interactableObject;
         void Start()
         {
             _camera = Camera.main;
@@ -15,6 +16,12 @@ namespace Behaviour.Player
         // TODO: Check if ray is out of interactable object and call OutOfFocus()
         void FixedUpdate()
         {
+            if (_interactableObject != null)
+            {
+                _interactableObject.GetComponent<IPickable>().OutOfFocus();
+                _interactableObject = null;
+            }
+
             RaycastHit hit;
             if (Physics.Raycast(_camera.transform.position, _camera.transform.forward, out hit, maxDistance))
             {
@@ -22,17 +29,16 @@ namespace Behaviour.Player
                 _focusedObject = hit.collider.gameObject;
                 if (_focusedObject.GetComponent<IPickable>() != null)
                 {
-                    var interactableObject = _focusedObject;
-                    interactableObject.GetComponent<IPickable>().OnFocus();
-                    Debug.Log(interactableObject.name);
+                    _interactableObject = _focusedObject;
+                    _interactableObject.GetComponent<IPickable>().OnFocus();
                 }
                 
             }
         }
 
-        public GameObject GetFocusedObject()
+        public GameObject GetInteractableObject()
         {
-            return _focusedObject;
+            return _interactableObject;
         }
     }
 }
