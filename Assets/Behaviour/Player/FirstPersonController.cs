@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Behaviour.Player;
 
 namespace Behaviour.Player
 { 
@@ -9,12 +8,14 @@ namespace Behaviour.Player
     {
         private Camera _camera;
         private CharacterController _characterController;
+        private Transform _holdPoint;
         private RaycastAim _raycastAim;
         private GameObject _interactableObject;
         
         private InputAction _iaMove;
         private InputAction _iaLook;
         private InputAction _iaInteract;
+        private InputAction _iaDrop;
         
         private Vector2 _movementVector; 
         private Vector2 _lookVector;
@@ -26,9 +27,13 @@ namespace Behaviour.Player
         {
             _camera = Camera.main;
             _characterController = GetComponent<CharacterController>();
+            _holdPoint = GameObject.Find("HoldPoint").transform;
+            
             _iaMove = InputSystem.actions.FindAction("Move");
             _iaLook = InputSystem.actions.FindAction("Look");   
             _iaInteract = InputSystem.actions.FindAction("Attack");
+            _iaDrop = InputSystem.actions.FindAction("Drop");
+            
             Cursor.lockState = CursorLockMode.Locked;
             _raycastAim = GetComponent<RaycastAim>();
         }
@@ -36,10 +41,11 @@ namespace Behaviour.Player
         {
             MoveCharacter();
             MoveCamera();
-            if (_iaInteract.IsPressed())
-            {
-                PickUp();
-            }
+            
+            _iaInteract.performed += ctx => PickUp();
+            _iaInteract.Enable();
+            _iaDrop.performed += ctx => _interactableObject.GetComponent<IPickable>().Drop();
+            _iaDrop.Enable();
         }
 
         private void MoveCamera()
@@ -68,8 +74,15 @@ namespace Behaviour.Player
             _interactableObject = _raycastAim.GetInteractableObject();
             if (_interactableObject != null)
             {
-                _interactableObject.GetComponent<IPickable>().PickUp(); 
-                Debug.Log("Interact");
+                if (_interactableObject.GetComponent<IPickable>().IsPicked() != true)
+                {
+                    _interactableObject.GetComponent<IPickable>().PickUp(_holdPoint);
+                    Debug.Log("Interact");
+                }
+                else
+                {
+                    _interactableObject.GetComponent<IPickable>().Throw(_camera.transform.forward);
+                }
             }
         }
     }
