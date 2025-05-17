@@ -4,7 +4,9 @@ namespace Behaviour
 { 
     public interface IPickable
     {
-        public void PickUp();
+        public void PickUp(Transform holdPoint);
+        public void Drop();
+        public void Throw();
         public void OnFocus();
         public void OutOfFocus();
     }
