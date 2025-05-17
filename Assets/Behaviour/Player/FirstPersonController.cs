@@ -3,19 +3,22 @@ using UnityEngine.InputSystem;
 
 namespace Behaviour.Player
 { 
+    [RequireComponent(typeof(RaycastAim))]
     public class FirstPersonController : MonoBehaviour
     {
         private Camera _camera;
         private CharacterController _characterController;
+        private RaycastAim _raycastAim;
         
         private InputAction _iaMove;
         private InputAction _iaLook;
+        private InputAction _iaInteract;
         
         private Vector2 _movementVector; 
         private Vector2 _lookVector;
         [SerializeField] private float movementSpeed;
         [SerializeField] private float cameraSensitivity;
-        private float _xRotation = 0f;
+        private float _xRotation;
         
         private void Start()
         {
@@ -23,7 +26,9 @@ namespace Behaviour.Player
             _characterController = GetComponent<CharacterController>();
             _iaMove = InputSystem.actions.FindAction("Move");
             _iaLook = InputSystem.actions.FindAction("Look");   
+            _iaInteract = InputSystem.actions.FindAction("Interact");
             Cursor.lockState = CursorLockMode.Locked;
+            _raycastAim = GetComponent<RaycastAim>();
         }
         private void Update()
         {
@@ -47,11 +52,14 @@ namespace Behaviour.Player
         private void MoveCharacter()
         {
             _movementVector = _iaMove.ReadValue<Vector2>();
-            // _characterController.Move(new Vector3( _movementVector.x * (Time.deltaTime * movementSpeed), 0, _movementVector.y * (Time.deltaTime * movementSpeed) ));
-            
             
             Vector3 move = transform.right * _movementVector.x + transform.forward * _movementVector.y;
             _characterController.Move(move * (movementSpeed * Time.deltaTime));
+        }
+
+        private void PickUp()
+        {
+            
         }
     }
 }
