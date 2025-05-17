@@ -1,12 +1,13 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Behaviour
 {
     public class BoxBehaviour : MonoBehaviour, IPickable
     {
+        private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
         private Rigidbody _rigidbody;
         private Renderer _renderer;
+        private bool _isPicked;
 
         private void Awake()
         {
@@ -16,19 +17,20 @@ namespace Behaviour
         }
         public void OnFocus()
         {
-            _renderer.material.SetColor("_EmissionColor", Color.red * .5f);
+            _renderer.material.SetColor(EmissionColor, Color.red * .5f);
             _renderer.material.EnableKeyword("_EMISSION");
         }
 
         public void OutOfFocus()
         {
-            _renderer.material.SetColor("_EmissionColor", Color.black);
+            _renderer.material.SetColor(EmissionColor, Color.black);
             _renderer.material.EnableKeyword("_EMISSION");
         }
 
         public void PickUp(Transform holdPoint)
         {
-            _renderer.material.SetColor("_EmissionColor", Color.yellow * .5f);
+            _isPicked = true;
+            _renderer.material.SetColor(EmissionColor, Color.yellow * .5f);
             _renderer.material.EnableKeyword("_EMISSION");
             
             transform.position = holdPoint.position;
@@ -39,15 +41,22 @@ namespace Behaviour
 
         public void Drop()
         {
+            _isPicked = false;
             transform.parent = null;
             _rigidbody.constraints = RigidbodyConstraints.None;
         }
 
-        public void Throw()
+        public void Throw(Vector3 throwVector)
         {
+            _isPicked = false;
             transform.parent = null;
-            gameObject.GetComponent<Rigidbody>().useGravity = true;
-            gameObject.GetComponent<Rigidbody>().AddForce(Vector3.forward * 10, ForceMode.Impulse);
+            _rigidbody.constraints = RigidbodyConstraints.None;
+            gameObject.GetComponent<Rigidbody>().AddForce(throwVector * 10, ForceMode.Impulse);
+        }
+
+        public bool IsPicked()
+        {
+            return _isPicked; 
         }
     }
 }

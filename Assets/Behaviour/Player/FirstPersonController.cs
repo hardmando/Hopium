@@ -41,10 +41,7 @@ namespace Behaviour.Player
         {
             MoveCharacter();
             MoveCamera();
-            /*if (_iaInteract.IsPressed())
-            {
-                PickUp();
-            }*/
+            
             _iaInteract.performed += ctx => PickUp();
             _iaInteract.Enable();
             _iaDrop.performed += ctx => _interactableObject.GetComponent<IPickable>().Drop();
@@ -77,8 +74,15 @@ namespace Behaviour.Player
             _interactableObject = _raycastAim.GetInteractableObject();
             if (_interactableObject != null)
             {
-                _interactableObject.GetComponent<IPickable>().PickUp(_holdPoint); 
-                Debug.Log("Interact");
+                if (_interactableObject.GetComponent<IPickable>().IsPicked() != true)
+                {
+                    _interactableObject.GetComponent<IPickable>().PickUp(_holdPoint);
+                    Debug.Log("Interact");
+                }
+                else
+                {
+                    _interactableObject.GetComponent<IPickable>().Throw(_camera.transform.forward);
+                }
             }
         }
     }
