@@ -17,6 +17,7 @@ namespace Behaviour.Player
         private InputAction _iaLook;
         private InputAction _iaInteract;
         private InputAction _iaDrop;
+        private InputAction _iaZoom;
         
         private Vector2 _movementVector; 
         private Vector2 _lookVector;
@@ -24,6 +25,8 @@ namespace Behaviour.Player
         [SerializeField] private float movementSpeed;
         [SerializeField] private float cameraSensitivity;
         private float _xRotation;
+        private float _zoomAmount = 0;
+        private Vector3 _holdPointDefault;
         
         private void Start()
         {
@@ -31,11 +34,13 @@ namespace Behaviour.Player
             _camera = Camera.main;
             _characterController = GetComponent<CharacterController>();
             _holdPoint = GameObject.Find("HoldPoint").transform;
+            _holdPointDefault = _holdPoint.localPosition;
             
             _iaMove = InputSystem.actions.FindAction("Move");
             _iaLook = InputSystem.actions.FindAction("Look");   
             _iaInteract = InputSystem.actions.FindAction("Attack");
             _iaDrop = InputSystem.actions.FindAction("Drop");
+            _iaZoom = InputSystem.actions.FindAction("Zoom");   
             
             Cursor.lockState = CursorLockMode.Locked;
             _raycastAim = GetComponent<RaycastAim>();
@@ -47,8 +52,10 @@ namespace Behaviour.Player
             
             _iaInteract.performed += ctx => PickUp();
             _iaInteract.Enable();
-            _iaDrop.performed += ctx => { _heldObject.GetComponent<IPickable>().Drop(); _heldObject = null; };
+            _iaDrop.performed += ctx => { if(_heldObject != null) _heldObject.GetComponent<IPickable>().Drop(); _heldObject = null; };
             _iaDrop.Enable();
+            _iaZoom.performed += ctx => ZoomObject();
+            _iaZoom.Enable();
         }
 
         private void MoveCamera()
@@ -74,6 +81,8 @@ namespace Behaviour.Player
 
         private void PickUp()
         {
+            _zoomAmount = 0;
+            _holdPoint.localPosition = _holdPointDefault;
             _interactableObject = _raycastAim.GetInteractableObject();
             if (_heldObject != null)
             {
@@ -90,6 +99,20 @@ namespace Behaviour.Player
                         _heldObject = _interactableObject;
                         Debug.Log("Interact");
                     }
+                }
+            }
+        }
+
+        private void ZoomObject()
+        {
+            float zoom = _iaZoom.ReadValue<Vector2>().y;
+            if (_heldObject != null && zoom != 0)
+            {
+                if (_zoomAmount is >= 0 and < 10 || _zoomAmount <= 0 && zoom > 0 || _zoomAmount >= 10 && zoom < 0)
+                {
+                    Debug.Log("Mouse wheel scrolled: " + zoom);
+                    _zoomAmount += zoom;
+                    _holdPoint.transform.localPosition += new Vector3(0, 0, zoom * .1f);
                 }
             }
         }
