@@ -7,10 +7,17 @@ namespace Behaviour
     {
         [SerializeField] private float receivingTime;
         [SerializeField] private float dispensingTime;
+        [SerializeField] private int packagesAmount;
+        private Transform _spawnPoint;
+        public GameObject packagePrefab;
         private int _count;
         private static int _days = 0;
 
-        [ContextMenu("Start Cycle")]
+        private void Awake()
+        {
+            _spawnPoint = transform.Find("SpawnPoint");
+        }
+
         public void StartCycle()
         {
             _count = 0;
@@ -19,6 +26,7 @@ namespace Behaviour
 
         private void StartReceivingStage()
         {
+            SpawnPackages(packagesAmount);
             StartCoroutine(WaitReceive());
         }
 
@@ -56,6 +64,16 @@ namespace Behaviour
             yield return new WaitForSeconds(dispensingTime);
             _count++;
             EndDispensingStage();
+        }
+
+        private void SpawnPackages(int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                Vector3 offset = Random.insideUnitSphere * 3f;
+                Instantiate(packagePrefab,
+                    new Vector3(_spawnPoint.position.x + offset.x, _spawnPoint.position.y + offset.y, _spawnPoint.position.z + offset.z), Quaternion.identity);
+            }
         }
     }
 }

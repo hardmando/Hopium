@@ -4,17 +4,19 @@ namespace Behaviour
 {
     public class BoxBehaviour : MonoBehaviour, IPickable
     {
+        private static int _packageID;
         private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
         private Rigidbody _rigidbody;
         private Renderer _renderer;
         private bool _isPicked;
-
+        
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
             _renderer = GetComponent<Renderer>();
-            
+            _packageID = Random.Range(0, int.MaxValue);
         }
+        public int GetPackageID() => _packageID;
         public void OnFocus()
         {
             _renderer.material.SetColor(EmissionColor, Color.red * .5f);
