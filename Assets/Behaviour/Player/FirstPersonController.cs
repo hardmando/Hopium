@@ -75,18 +75,21 @@ namespace Behaviour.Player
         private void PickUp()
         {
             _interactableObject = _raycastAim.GetInteractableObject();
-            if (_interactableObject != null)
+            if (_heldObject != null)
             {
-                if (_interactableObject.GetComponent<IPickable>().IsPicked() != true && _heldObject == null)
+                _heldObject.GetComponent<IPickable>().Throw(_camera.transform.forward);
+                _heldObject = null;
+            }
+            else
+            {
+                if (_interactableObject != null)
                 {
-                    _interactableObject.GetComponent<IPickable>().PickUp(_holdPoint);
-                    _heldObject = _interactableObject;
-                    Debug.Log("Interact");
-                }
-                else
-                {
-                    _heldObject.GetComponent<IPickable>().Throw(_camera.transform.forward);
-                    _heldObject = null;
+                    if (_interactableObject.GetComponent<IPickable>().IsPicked() != true && _heldObject == null)
+                    {
+                        _interactableObject.GetComponent<IPickable>().PickUp(_holdPoint);
+                        _heldObject = _interactableObject;
+                        Debug.Log("Interact");
+                    }
                 }
             }
         }
