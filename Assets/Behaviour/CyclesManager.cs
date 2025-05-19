@@ -8,6 +8,7 @@ namespace Behaviour
         [SerializeField] private float receivingTime;
         [SerializeField] private float dispensingTime;
         private int _count;
+        private static int _days = 0;
 
         [ContextMenu("Start Cycle")]
         public void StartCycle()
@@ -39,6 +40,7 @@ namespace Behaviour
             }
             else
             {
+                _days++;
                 Debug.Log("Cycle Ended!");
             }
         }
