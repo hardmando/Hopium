@@ -47,7 +47,7 @@ namespace Behaviour.Player
             
             _iaInteract.performed += ctx => PickUp();
             _iaInteract.Enable();
-            _iaDrop.performed += ctx => { _heldObject.GetComponent<IPickable>().Drop(); _heldObject = null; };
+            _iaDrop.performed += ctx => { if(_heldObject != null) _heldObject.GetComponent<IPickable>().Drop(); _heldObject = null; };
             _iaDrop.Enable();
         }
 
