@@ -38,9 +38,9 @@ namespace Behaviour
             transform.position = holdPoint.position;
             transform.parent = holdPoint;
             transform.localRotation = new Quaternion(0, 0, 0, 1);
-            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             _rigidbody.constraints = RigidbodyConstraints.FreezePosition;
-            _rigidbody.isKinematic = true;
+            _rigidbody.angularDamping = 7f;
+            //_rigidbody.isKinematic = true;
         }
 
         public void Drop()
@@ -48,7 +48,8 @@ namespace Behaviour
             _isPicked = false;
             transform.parent = null;
             _rigidbody.constraints = RigidbodyConstraints.None;
-            _rigidbody.isKinematic = false;
+            _rigidbody.angularDamping = 1f;
+            //_rigidbody.isKinematic = false;
         }
 
         public void Throw(Vector3 throwVector)
@@ -56,7 +57,8 @@ namespace Behaviour
             _isPicked = false;
             transform.parent = null;
             _rigidbody.constraints = RigidbodyConstraints.None;
-            _rigidbody.isKinematic = false;
+            _rigidbody.angularDamping = 1f;
+            //_rigidbody.isKinematic = false;
             gameObject.GetComponent<Rigidbody>().AddForce(throwVector * 10, ForceMode.Impulse);
         }
 
