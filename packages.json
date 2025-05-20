@@ -1,0 +1,7 @@
+[
+{"Id":61,"_arrivalTime":"0:0:0 1 / Jan","_size":"Big","_weight":330.0,"NeedsRef":false,"Fragile":false},
+{"Id":62,"_arrivalTime":"0:0:0 1 / Jan","_size":"Small","_weight":130.0,"NeedsRef":false,"Fragile":false},
+{"Id":63,"_arrivalTime":"0:0:0 1 / Jan","_size":"Medium","_weight":205.0,"NeedsRef":false,"Fragile":false},
+{"Id":64,"_arrivalTime":"0:0:0 1 / Jan","_size":"Medium","_weight":239.0,"NeedsRef":false,"Fragile":false},
+{"Id":65,"_arrivalTime":"0:0:0 1 / Jan","_size":"Small","_weight":159.0,"NeedsRef":false,"Fragile":false}
+]

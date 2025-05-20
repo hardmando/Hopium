@@ -5,7 +5,7 @@ namespace Behaviour
 {
     public class GlobalTime : MonoBehaviour
     {
-        private static GlobalTime Instance {get; set;}
+        public static GlobalTime Instance {get; private set;}
         
         private static int _currentHour;
         private static int _currentMinute;
@@ -155,5 +155,11 @@ namespace Behaviour
             _currentDay = 1;
             _currentMonth++;
         }
+
+        public string GetTime()
+        {
+            return _currentHour + ":" + _currentMinute + ":" + (int)_currentSecond + " " + _currentDay + " / " +
+                   Months[_currentMonth];
+        } 
     }
 }
